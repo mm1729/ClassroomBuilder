@@ -14,6 +14,12 @@ public class Grid<T> {
 			this.data = data;
 			this.next = next;
 		}
+		
+		public boolean equals(Neighbour other){
+			return (this.data.equals(other.data));
+		}
+		
+		
 	}
 	ArrayList<Neighbour> adjMat; //stores students with their neighbors as linked lists
 
@@ -22,7 +28,7 @@ public class Grid<T> {
 	
 	public Grid(int size){
 		this.size = size;
-		adjMat = new ArrayList<Neighbour>();
+		adjMat = new ArrayList<Neighbour>(size);
 	}
 	
 	/**
@@ -42,8 +48,6 @@ public class Grid<T> {
 			return;
 		
 		Neighbour nbrLL = adjMat.get(adjMat.indexOf(addTo));
-		if(nbrLL == null)
-			return;
 		
 		Neighbour ptr = nbrLL.next;
 		while(ptr != null){
@@ -52,12 +56,41 @@ public class Grid<T> {
 			ptr = ptr.next;
 		}
 		nbrLL.next = new Neighbour(neighbour, nbrLL.next);
+		return;
 	}
 	
 	public void delete(T data){
+		Neighbour delete = new Neighbour(data);
+		if(!adjMat.contains(delete))
+			return;
 		
+		Neighbour nbrLL = adjMat.get(adjMat.indexOf(delete));
+		
+		Neighbour ptr = nbrLL.next;
+		while(ptr != null){
+			deleteNeighbour(ptr.data, data);
+			ptr = ptr.next;
+		}
+		
+		adjMat.remove(nbrLL);
+		return;
 	}
+	
 	public void deleteNeighbour(T data, T neighbour){
+		Neighbour deleteFrom = new Neighbour(data);
+		if(!adjMat.contains(deleteFrom))
+			return;
 		
+		Neighbour nbrLL = adjMat.get(adjMat.indexOf(deleteFrom));
+		
+		Neighbour ptr = nbrLL.next, prev = nbrLL;
+		while(ptr != null){
+			if(ptr.data.equals(neighbour))
+				prev.next = ptr.next;
+			ptr = ptr.next;
+			prev = prev.next;
+		}
+		return;
 	}
+	
 }
